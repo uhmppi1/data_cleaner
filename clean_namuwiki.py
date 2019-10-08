@@ -2,7 +2,8 @@ import json, ijson
 import re
 from pprint import pprint
 
-filename = '/home/pipaek/data/corpus/hangul/namuwiki/namuwiki190312/namuwiki_20190312.json'
+# filename = '/home/pipaek/data/corpus/hangul/namuwiki/namuwiki190312/namuwiki_20190312.json'
+filename = '/home/pipaek/data/project/kisdi/data/namuwiki/namuwiki190312/namuwiki_20190312.json'
 
 # Read file to memory, it takes some time.
 # with open(filename) as data_file:
@@ -66,7 +67,7 @@ with open(filename) as data_file:
             if i > 5:
                 break
 
-            # print(o)
+            print(o)
             # print(strip(o['text']))
             corpus_file.write(strip(o['text']))
 
