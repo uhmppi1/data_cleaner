@@ -1,5 +1,6 @@
 import json, ijson
 import re
+import os
 from pprint import pprint
 
 # filename = 'raw_data/navernews/20190101_경제.json'
@@ -36,6 +37,19 @@ def strip(text, press):
     print(pattern)
     text = re.sub(pattern, '', text) # 기자이름
 
+    # # 한국경제 케이스..
+    # if press in ['한국경제']:
+    #     pattern = r"(^*기자 $)(.+\s)"
+    #     print(pattern)
+    #     text = re.sub(pattern, r'\2', text)  # 기자이름
+
+
+    pattern = r"(^%s )(.+\s)" % press
+    print(pattern)
+    text = re.sub(pattern, r'\2', text)  # 언론사명
+
+
+
     pattern = r".*SUB TITLE START.+SUB TITLE END\s"
     print(pattern)
     text = re.sub(pattern, '', text)  # SUB TITLE
@@ -55,28 +69,63 @@ def strip(text, press):
 # print(text)
 # print(strip(text, press))
 
-filename = 'raw_data/navernews/20190101_경제.json'
-cleaned_file_name = './cleaned_data/navernews/navernews_경제.txt'
+cleaned_file_path = './cleaned_data/navernews/navernews_{}.txt'
 
-with open(filename) as data_file:
-    task_completed = False
+def one_json_proc(file_path, sector):
+    with open(file_path) as data_file:
+        with open(cleaned_file_path.format(sector), mode='a') as corpus_file:
+            objs = ijson.items(data_file, 'articles.item')
+            # print(type(objs))
+            # print('starts..')
+            for i, o in enumerate(objs):
+                print(i)
+                # if i > 5:
+                #     break
 
-    with open(cleaned_file_name, mode='w') as corpus_file:
-        objs = ijson.items(data_file, 'articles')
-        print('starts..')
-        for i, o in enumerate(objs):
-            print(i)
-            if i > 5:
-                break
+                # print(o)
+                # print(type(o))
+                # print(strip(o['contents'], o['press']))
+                try:
+                    text = strip(o['contents'], o['press'])
+                    if text:
+                        # corpus_file.write(o['press'])
+                        # corpus_file.write('\n')
+                        corpus_file.write(text)
+                        if o['comments']:
+                            for comment in o['comments']:
+                                corpus_file.write('\n\n')
+                                corpus_file.write(comment['comments'])
+                        corpus_file.write('\n\n\n')
+                except TypeError:
+                    # print(o)
+                    continue
+            # print('ends..')
 
-            print(o)
-            print(strip(o['contents']))
-            text = strip(o['contents'])
-            if text:
-                # corpus_file.write(extract_text(o['title']))
-                # corpus_file.write('\n')
-                corpus_file.write(text)
-                corpus_file.write('\n\n\n')
+# filename = 'raw_data/navernews/20190101_경제.json'
+# cleaned_file_name = './cleaned_data/navernews/navernews_경제.txt'
+
+data_dir = '/home/pipaek/data/project/kisdi/data/naver_news'
+
+dir_list = os.listdir(data_dir)
+dir_list.sort()
+
+# print(dir_list)
+
+for dir in dir_list:
+  dir_path = os.path.join(data_dir, dir)
+  file_list = os.listdir(dir_path)
+  file_list.sort()
+
+  print(file_list)
+  for file in file_list:
+    file_path = os.path.join(dir_path, file)
+    sector = file.split('.')[0].split('_')[1]
+    print(file_path)
+    # print(sector)
+    # print(cleaned_file_path.format(sector))
+    one_json_proc(file_path, sector)
+
+
 
 
 # data is list of articles

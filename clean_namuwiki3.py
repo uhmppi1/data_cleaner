@@ -25,10 +25,10 @@ with open(filename) as data_file:
     for i, o in enumerate(objs):
       if i % 10000 == 0:
         print('#### count = %d' % i)
-      # if i > 50:
-      #   break
+      if i > 50:
+        break
 
-      # print(o)
+      print(o)
       # print(strip(o['text']))
 
       text = extract_text(o['text'])
