@@ -2,7 +2,7 @@ import json, ijson
 import re
 from pprint import pprint
 
-filename = 'raw_data/navernews/20190101_경제.json'
+# filename = 'raw_data/navernews/20190101_경제.json'
 
 # Read file to memory, it takes some time.
 # with open(filename) as data_file:
@@ -41,8 +41,8 @@ def strip(text, press):
     text = re.sub(pattern, '', text)  # SUB TITLE
 
 
-    text = chinese.sub('', text)  # remove chinese
-    text = japanese.sub('', text)  # remove japanese
+    # text = chinese.sub('', text)  # remove chinese
+    # text = japanese.sub('', text)  # remove japanese
     return text
 
 
@@ -50,22 +50,33 @@ def strip(text, press):
 # press = '이데일리'
 # print(strip(text, press))
 
-text = '2일 검찰 고발 “퇴직 공무원 공무 비밀 엄수해야” 신재민 “내부고발한 것 추가로 영상 올리겠다” 구윤철 기획재정부 2차관과 신재민 전 기재부 사무관. 구 차관은 지난달 31일 긴급 브리핑에서 “법적 검토를 거쳐서 요건에 해당한다면 적절한 조치를 취하겠다”고 말했다. 신 전 사무관은 “내부고발한 이상 정부의 재발 방지 사과 듣고 그리고 제가 잘 되는게 도리”라고 밝혔다. 연합뉴스 신 전 사무관 유튜브 세종 이데일리 최훈길 기자 기획재정부가 신재민 전 기재부 사무관을 '
-press = '이데일리'
-print(text)
-print(strip(text, press))
+# text = '2일 검찰 고발 “퇴직 공무원 공무 비밀 엄수해야” 신재민 “내부고발한 것 추가로 영상 올리겠다” 구윤철 기획재정부 2차관과 신재민 전 기재부 사무관. 구 차관은 지난달 31일 긴급 브리핑에서 “법적 검토를 거쳐서 요건에 해당한다면 적절한 조치를 취하겠다”고 말했다. 신 전 사무관은 “내부고발한 이상 정부의 재발 방지 사과 듣고 그리고 제가 잘 되는게 도리”라고 밝혔다. 연합뉴스 신 전 사무관 유튜브 세종 이데일리 최훈길 기자 기획재정부가 신재민 전 기재부 사무관을 '
+# press = '이데일리'
+# print(text)
+# print(strip(text, press))
 
+filename = 'raw_data/navernews/20190101_경제.json'
+cleaned_file_name = './cleaned_data/navernews/navernews_경제.txt'
 
-# with open(filename) as data_file:
-#     objs = ijson.items(data_file, 'item')
-#     print('starts..')
-#     for i, o in enumerate(objs):
-#         print(i)
-#         if i > 5:
-#             break
-#
-#         print(o)
-#         print(strip(o['text']))
+with open(filename) as data_file:
+    task_completed = False
+
+    with open(cleaned_file_name, mode='w') as corpus_file:
+        objs = ijson.items(data_file, 'articles')
+        print('starts..')
+        for i, o in enumerate(objs):
+            print(i)
+            if i > 5:
+                break
+
+            print(o)
+            print(strip(o['contents']))
+            text = strip(o['contents'])
+            if text:
+                # corpus_file.write(extract_text(o['title']))
+                # corpus_file.write('\n')
+                corpus_file.write(text)
+                corpus_file.write('\n\n\n')
 
 
 # data is list of articles
